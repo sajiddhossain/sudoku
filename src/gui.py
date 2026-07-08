@@ -2,16 +2,26 @@ import tkinter
 from tkinter import messagebox
 from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells
+from src.utils import is_valid
 
 cells = [[None for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
-    for r in range(9):
-        for c in range(9):
-            # entry widget for each cell
-            entry = tkinter.Entry(window, width=2)
-            entry.grid(row=r, column=c)
-            cells[r][c] = entry
+    for block_r in range(3):
+        for block_c in range(3):
+            frame = tkinter.Frame(window, highlightbackground="black", highlightthickness=2)
+            frame.grid(row=block_r, column=block_c, padx=1, pady=1)
+
+            for i in range(3):
+                for j in range(3):
+                    r = block_r * 3 + i
+                    c = block_c * 3 + j
+
+                    # entry widget for each cell
+                    entry = tkinter.Entry(frame, width=3, justify="center")
+                    entry.grid(row=i, column=j)
+                    entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
+                    cells[r][c] = entry
 
 def create_empty_grid():
     return [[0 for _ in range(9)] for _ in range(9)]
@@ -49,3 +59,28 @@ def update_ui(grid_data):
             cells[r][c].delete(0, tkinter.END)
             if grid_data[r][c] != 0:
                 cells[r][c].insert(0, str(grid_data[r][c]))
+                cells[r][c].config(state="disabled")
+            else:
+                cells[r][c].config(state="normal")
+
+def validate_cell(event, r, c):
+    grid = get_current_grid()
+    value = grid[r][c]
+
+    if value == 0:
+        cells[r][c].config(bg="white")
+        return
+    
+    grid[r][c] = 0
+
+    if is_valid(grid, r, c, value):
+        cells[r][c].config(bg="white")
+    else:
+        cells[r][c].config(bg="red")
+
+def clear_grid():
+    for r in range(9):
+        for c in range(9):
+            cells[r][c].config(state="normal")
+            cells[r][c].delete(0, tkinter.END)
+            cells[r][c].config(bg="white")
