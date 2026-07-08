@@ -41,3 +41,13 @@ def exists_in_row(grid, r, c, number):
         if grid[r][current_column] == number:
             return True
     return False
+
+def is_grid_valid(grid):
+    for r in range(9):
+        for c in range(9):
+            value = grid[r][c]
+            if value != 0:
+                if not line_check(grid, r, c, value): return False
+                if not column_check(grid, r, c, value): return False
+                if not box_check(grid, r, c, value): return False
+    return True

@@ -2,7 +2,7 @@ import tkinter
 from tkinter import messagebox
 from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells
-from src.utils import is_valid
+from src.utils import is_valid, is_grid_valid
 
 # gui.py
 
@@ -41,6 +41,9 @@ def button_generate_clicked():
 
 def resolve_button_clicked():
     grid = get_current_grid()
+    if not is_grid_valid(grid):
+        show_error_message("Grid contains conflicts.")
+        return
     if resolve(grid):
         update_ui(grid)
     else:
