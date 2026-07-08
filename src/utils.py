@@ -16,8 +16,9 @@ def box_check(grid, r, c, number):
             current_line = start_r + i
             current_column = start_c + j
 
-            if grid[current_line][current_column] == number:
-                return False
+            if (current_line != r or current_column != c):
+                if grid[current_line][current_column] == number:
+                    return False
     return True
 
 def column_check(grid, column, number, current_line):
@@ -32,3 +33,11 @@ def is_valid(grid, r, c, number):
     if line_check(grid, r, number, c) and column_check(grid, c, number, r) and box_check(grid, r, c, number):
         return True
     return False # even if one of the conditions is not satisfied, it returns False
+
+def exists_in_row(grid, r, c, number):
+    for current_column in range(9):
+        if current_column == c:
+            continue
+        if grid[r][current_column] == number:
+            return True
+    return False
