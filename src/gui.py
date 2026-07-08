@@ -7,6 +7,8 @@ from src.utils import is_valid
 # gui.py
 
 cells = [[None for _ in range(9)] for _ in range(9)]
+DEFAULT_BG = "black"
+DEFAULT_FG = "white"
 
 def draw_grid(window):
     for block_r in range(3):
@@ -20,7 +22,7 @@ def draw_grid(window):
                     c = block_c * 3 + j
 
                     # entry widget for each cell
-                    entry = tkinter.Entry(frame, width=3, justify="center")
+                    entry = tkinter.Entry(frame, width=3, justify="center", bg=DEFAULT_BG, fg=DEFAULT_FG, insertbackground=DEFAULT_FG)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
                     cells[r][c] = entry
@@ -70,15 +72,15 @@ def validate_cell(event, r, c):
     value = grid[r][c]
 
     if value == 0:
-        cells[r][c].config(bg="white")
+        cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
         return
     
     grid[r][c] = 0
 
     if is_valid(grid, r, c, value):
-        cells[r][c].config(bg="white")
+        cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
     else:
-        cells[r][c].config(bg="red")
+        cells[r][c].config(bg="red", fg="white")
 
 def clear_grid():
     for r in range(9):
