@@ -17,3 +17,16 @@ def box_check(grid, r, c, number):
             if grid[current_line][current_column] == number:
                 return False
     return True
+
+def column_check(grid, column, number, current_line):
+    for line_i in range(9):
+        if line_i != current_line:
+            if grid[line_i][column] == number:
+                return False
+    return True
+
+def is_valid(grid, r, c, number):
+    # checking if all the conditions are satisfied
+    if line_check(grid, r, number, c) and column_check(grid, c, number, r) and box_check(grid, r, c, number):
+        return True
+    return False # even if one of the conditions is not satisfied, it returns False
