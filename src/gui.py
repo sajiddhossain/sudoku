@@ -49,7 +49,7 @@ def get_current_grid():
     for r in range(9):
         for c in range(9):
             value = cells[r][c].get()
-            if value.isdigit():
+            if value.isdigit() and 1 <= int(value) <= 9:
                 new_grid[r][c] = int(value)
             else:
                 new_grid[r][c] = 0
