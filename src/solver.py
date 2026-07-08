@@ -29,3 +29,19 @@ def remove_cells(grid, num_cells_to_remove):
         if grid[r][c] != 0:
             grid[r][c] = 0
             num_cells_to_remove -= 1
+
+def solution_count(grid, count):
+    cell = find_empty_cell(grid)
+
+    if cell is None:
+        return count + 1 # found a solution
+    
+    r, c = cell
+    for number in range(1, 10):
+        if is_valid(grid, r, c, number):
+            grid[r][c] = number
+            count = solution_count(grid, count)
+            grid[r][c] = 0
+            if count >= 2:
+                return count
+    return count
