@@ -1,6 +1,8 @@
 import tkinter as tk
 from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid
 
+# main.py
+
 def main():
     root = tk.Tk()
     root.title("Sudoku Forge")

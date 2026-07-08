@@ -2,6 +2,8 @@ import random
 from src.utils import is_valid
 from src.grid import find_empty_cell
 
+# solver.py
+
 def generate_complete_grid(grid):
     cell = find_empty_cell(grid)
     if cell is None:

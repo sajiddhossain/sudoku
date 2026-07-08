@@ -4,6 +4,8 @@ from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells
 from src.utils import is_valid
 
+# gui.py
+
 cells = [[None for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
