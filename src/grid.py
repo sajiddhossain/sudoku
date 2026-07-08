@@ -1,4 +1,4 @@
-from src.main import is_valid
+from src.utils import is_valid
 
 def find_empty_cell(grid):
     for r in range(9):
