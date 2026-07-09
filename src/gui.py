@@ -85,6 +85,12 @@ def update_ui(grid_data):
 def validate_cell(event, r, c):
     value_str = cells[r][c].get()
 
+    if event and event.keysym == "BackSpace":
+        if is_note_mode:
+            notes_grid[r][c].clear()
+            cells[r][c].delete(0, "end")
+            return
+
     if len(value_str) > 2:
         cells[r][c].delete(0, "end")
         return
@@ -123,6 +129,8 @@ def clear_grid():
             data_grid[r][c] = 0
             cells[r][c].config(state="normal", bg=DEFAULT_BG, fg=DEFAULT_FG)
             cells[r][c].delete(0, tkinter.END)
+    if timer_label:
+        timer_label.config(text="00:00")
 
 def button_hint_clicked():
     r, c, value = get_hint(data_grid)
@@ -161,3 +169,9 @@ def update_timer(label):
 def set_timer_label(label):
     global timer_label
     timer_label = label
+
+def check_victory():
+    if all(all(row) for row in data_grid) and is_grid_valid(data_grid):
+        global timer_running
+        timer_running = False
+        messagebox.showinfo("Congratulations!", "Sudoku completed correctly!")
