@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import messagebox
 from src.grid import resolve
-from src.solver import generate_complete_grid, remove_cells
+from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 
 # gui.py
@@ -91,3 +91,13 @@ def clear_grid():
             cells[r][c].config(state="normal")
             cells[r][c].delete(0, tkinter.END)
             cells[r][c].config(bg="white")
+
+def button_hint_clicked():
+    grid = get_current_grid()
+    r, c, value = get_hint(grid)
+    if value is not None:
+        cells[r][c].delete(0, tkinter.END)
+        cells[r][c].insert(0, str(value))
+        cells[r][c].config(fg="blue", bg=DEFAULT_BG)
+    else:
+        show_error_message("No hints available or puzzle is already solved.")

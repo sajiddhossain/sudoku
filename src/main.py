@@ -1,5 +1,5 @@
 import tkinter as tk
-from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid
+from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked
 
 # main.py
 
@@ -17,6 +17,9 @@ def main():
 
     btn_clear = tk.Button(root, text="Clear Grid", command=clear_grid)
     btn_clear.grid(row=4, column=4, pady=10)
+
+    btn_hint = tk.Button(root, text="Get Hint", command=button_hint_clicked)
+    btn_hint.grid(row=4, column=6, pady=10)
 
     root.mainloop()
 

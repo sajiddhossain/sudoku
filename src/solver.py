@@ -1,6 +1,6 @@
 import random
 from src.utils import is_valid
-from src.grid import find_empty_cell
+from src.grid import find_empty_cell, resolve
 
 # solver.py
 
@@ -45,3 +45,14 @@ def solution_count(grid, count):
             if count >= 2:
                 return count
     return count
+
+def get_hint(grid):
+    copy_grid = [row[:] for row in grid]
+
+    if resolve(copy_grid):
+        for r in range(9):
+            for c in range(9):
+                if grid[r][c] == 0:
+                    suggested_value = copy_grid[r][c]
+                    return (r, c, suggested_value)
+    return None, None, None
