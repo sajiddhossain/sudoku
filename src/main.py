@@ -6,9 +6,10 @@ from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, 
 def main():
     root = tk.Tk()
     root.title("Sudoku Forge")
+    root.geometry("400x500")
 
     timer_label = tk.Label(root, text="00:00", font=("Arial", 16))
-    timer_label.grid(row=0, column=0, columnspan=9, pady=5)
+    timer_label.grid(row=6, column=0, columnspan=9, pady=5)
     set_timer_label(timer_label)
 
     draw_grid(root)

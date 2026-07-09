@@ -67,6 +67,8 @@ def resolve_button_clicked():
         show_error_message("Grid contains conflicts.")
         return
     
+    timer_running = False
+    
     if resolve(data_grid):
         update_ui(data_grid)
     else:
