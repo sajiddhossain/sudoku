@@ -10,6 +10,9 @@ cells = [[None for _ in range(9)] for _ in range(9)]
 DEFAULT_BG = "black"
 DEFAULT_FG = "white"
 data_grid = [[0 for _ in range(9)] for _ in range(9)]
+notes_grid = [[set() for _ in range(9)] for _ in range(9)]
+is_note_mode = False
+btn_note = None
 
 def draw_grid(window):
     for block_r in range(3):
@@ -73,6 +76,21 @@ def update_ui(grid_data):
 
 def validate_cell(event, r, c):
     value_str = cells[r][c].get()
+
+    if is_note_mode:
+        if value_str.isdigit() and "1" <= value_str <= "9":
+            value = int(value_str)
+            if value in notes_grid[r][c]:
+                notes_grid[r][c].remove(value)
+            else:
+                notes_grid[r][c].add(value)
+
+        cells[r][c].delete(0, "end")
+        if notes_grid[r][c]:
+            note_text = "".join(sorted(map(str, notes_grid[r][c])))
+            cells[r][c].insert(0, note_text)
+            cells[r][c].config(fg="gray")
+        return
     value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
     data_grid[r][c] = value
     cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
@@ -102,3 +120,20 @@ def button_hint_clicked():
         cells[r][c].config(fg="blue", bg=DEFAULT_BG)
     else:
         show_error_message("No hints available or puzzle is already solved.")
+
+def toggle_note(r, c, number):
+    if number in notes_grid[r][c]:
+        notes_grid[r][c].remove(number)
+    else:
+        notes_grid[r][c].add(number)
+
+def toggle_note_mode():
+    global is_note_mode
+    is_note_mode = not is_note_mode
+    if btn_note:
+        btn_note.config(bg="orange" if is_note_mode else "SystemButtonFace")
+
+def create_note_button(window):
+    global btn_note
+    btn_note = tkinter.Button(window, text="Note Mode", command=toggle_note_mode)
+    return btn_note

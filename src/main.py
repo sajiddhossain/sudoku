@@ -1,5 +1,5 @@
 import tkinter as tk
-from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked
+from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, toggle_note_mode, create_note_button
 
 # main.py
 
@@ -20,6 +20,9 @@ def main():
 
     btn_hint = tk.Button(root, text="Get Hint", command=button_hint_clicked)
     btn_hint.grid(row=4, column=6, pady=10)
+
+    btn_note = create_note_button(root)
+    btn_note.grid(row=5, column=0, columnspan=8, pady=10)
 
     root.mainloop()
 

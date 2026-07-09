@@ -21,16 +21,24 @@ def generate_complete_grid(grid):
 
     return False
 
-def remove_cells(grid, num_cells_to_remove):
-    while num_cells_to_remove > 0:
+def remove_cells(grid, count):
+    removed = 0
+    while removed < count:
         r = random.randint(0, 8)
         c = random.randint(0, 8)
 
         if grid[r][c] != 0:
+            backup = grid[r][c]
             grid[r][c] = 0
-            num_cells_to_remove -= 1
+            
+            test_grid = [row[:] for row in grid]
 
-def solution_count(grid, count):
+            if solution_count(test_grid) != 1:
+                grid[r][c] = backup
+            else:
+                removed += 1
+
+def solution_count(grid, count=0):
     cell = find_empty_cell(grid)
 
     if cell is None:
