@@ -35,10 +35,15 @@ def show_error_message(message):
     messagebox.showerror("Error", message)
 
 def button_generate_clicked():
-    grid = create_empty_grid()
-    generate_complete_grid(grid)
-    remove_cells(grid, 40) # remove 40 cells for the puzzle
-    update_ui(grid)
+    new_grid = create_empty_grid()
+    generate_complete_grid(new_grid)
+    remove_cells(new_grid, 40) # remove 40 cells for the puzzle
+    
+    for r in range(9):
+        for c in range(9):
+            data_grid[r][c] = new_grid[r][c]
+
+    update_ui(new_grid)
 
 def resolve_button_clicked():
     if not is_grid_valid(data_grid):
@@ -78,9 +83,9 @@ def validate_cell(event, r, c):
 def clear_grid():
     for r in range(9):
         for c in range(9):
-            cells[r][c].config(state="normal")
+            data_grid[r][c] = 0
+            cells[r][c].config(state="normal", bg=DEFAULT_BG, fg=DEFAULT_FG)
             cells[r][c].delete(0, tkinter.END)
-            cells[r][c].config(bg="white")
 
 def button_hint_clicked():
     r, c, value = get_hint(data_grid)
