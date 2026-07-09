@@ -29,6 +29,12 @@ def column_check(grid, r, c, number):
     return True
 
 def is_valid(grid, r, c, number):
+    if not (0 <= r < 9 and 0 <= c <9):
+        return False
+    if not (1 <= number <= 9):
+        return False
+    if grid[r][c] != 0:
+        return False
     # checking if all the conditions are satisfied
     if line_check(grid, r, c, number) and column_check(grid, r, c, number) and box_check(grid, r, c, number):
         return True

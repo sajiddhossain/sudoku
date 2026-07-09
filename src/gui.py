@@ -9,6 +9,7 @@ from src.utils import is_valid, is_grid_valid
 cells = [[None for _ in range(9)] for _ in range(9)]
 DEFAULT_BG = "black"
 DEFAULT_FG = "white"
+data_grid = [[0 for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
     for block_r in range(3):
@@ -40,25 +41,14 @@ def button_generate_clicked():
     update_ui(grid)
 
 def resolve_button_clicked():
-    grid = get_current_grid()
-    if not is_grid_valid(grid):
+    if not is_grid_valid(data_grid):
         show_error_message("Grid contains conflicts.")
         return
-    if resolve(grid):
-        update_ui(grid)
+    
+    if resolve(data_grid):
+        update_ui(data_grid)
     else:
         show_error_message("No solution found.")
-
-def get_current_grid():
-    new_grid = [[0 for _ in range(9)] for _ in range(9)]
-    for r in range(9):
-        for c in range(9):
-            value = cells[r][c].get()
-            if value.isdigit() and 1 <= int(value) <= 9:
-                new_grid[r][c] = int(value)
-            else:
-                new_grid[r][c] = 0
-    return new_grid
 
 def update_ui(grid_data):
     for r in range(9):
@@ -71,18 +61,18 @@ def update_ui(grid_data):
                 cells[r][c].config(state="normal")
 
 def validate_cell(event, r, c):
-    grid = get_current_grid()
-    value = grid[r][c]
+    value_str = cells[r][c].get()
+    value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
+    data_grid[r][c] = value
+    cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
 
     if value == 0:
-        cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
         return
-    
-    grid[r][c] = 0
 
-    if is_valid(grid, r, c, value):
-        cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
-    else:
+    temp_grid = [row[:] for row in data_grid]
+    temp_grid[r][c] = 0
+
+    if not is_valid(temp_grid, r, c, value):
         cells[r][c].config(bg="red", fg="white")
 
 def clear_grid():
@@ -93,9 +83,9 @@ def clear_grid():
             cells[r][c].config(bg="white")
 
 def button_hint_clicked():
-    grid = get_current_grid()
-    r, c, value = get_hint(grid)
+    r, c, value = get_hint(data_grid)
     if value is not None:
+        data_grid[r][c] = value
         cells[r][c].delete(0, tkinter.END)
         cells[r][c].insert(0, str(value))
         cells[r][c].config(fg="blue", bg=DEFAULT_BG)
