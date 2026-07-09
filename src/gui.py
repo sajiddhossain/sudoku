@@ -3,6 +3,7 @@ from tkinter import messagebox
 from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
+import time
 
 # gui.py
 
@@ -13,6 +14,9 @@ data_grid = [[0 for _ in range(9)] for _ in range(9)]
 notes_grid = [[set() for _ in range(9)] for _ in range(9)]
 is_note_mode = False
 btn_note = None
+start_time = None
+timer_running = False
+timer_label = None
 
 def draw_grid(window):
     for block_r in range(3):
@@ -38,9 +42,13 @@ def show_error_message(message):
     messagebox.showerror("Error", message)
 
 def button_generate_clicked():
+    global start_time, timer_running
     new_grid = create_empty_grid()
     generate_complete_grid(new_grid)
     remove_cells(new_grid, 40) # remove 40 cells for the puzzle
+    start_time = time.time()
+    timer_running = True
+    update_timer(timer_label)
     
     for r in range(9):
         for c in range(9):
@@ -77,6 +85,10 @@ def update_ui(grid_data):
 def validate_cell(event, r, c):
     value_str = cells[r][c].get()
 
+    if len(value_str) > 2:
+        cells[r][c].delete(0, "end")
+        return
+
     if is_note_mode:
         if value_str.isdigit() and "1" <= value_str <= "9":
             value = int(value_str)
@@ -92,6 +104,7 @@ def validate_cell(event, r, c):
             cells[r][c].config(fg="gray")
         return
     value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
+    notes_grid[r][c].clear()
     data_grid[r][c] = value
     cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
 
@@ -137,3 +150,14 @@ def create_note_button(window):
     global btn_note
     btn_note = tkinter.Button(window, text="Note Mode", command=toggle_note_mode)
     return btn_note
+
+def update_timer(label):
+    if timer_running:
+        elapsed = int(time.time() - start_time)
+        minutes, seconds = divmod(elapsed, 60)
+        label.config(text=f"{minutes:02d}:{seconds:02d}")
+        label.after(1000, lambda: update_timer(label))
+
+def set_timer_label(label):
+    global timer_label
+    timer_label = label

@@ -1,11 +1,16 @@
 import tkinter as tk
-from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, toggle_note_mode, create_note_button
+from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, toggle_note_mode, create_note_button, set_timer_label
 
 # main.py
 
 def main():
     root = tk.Tk()
     root.title("Sudoku Forge")
+
+    timer_label = tk.Label(root, text="00:00", font=("Arial", 16))
+    timer_label.grid(row=0, column=0, columnspan=9, pady=5)
+    set_timer_label(timer_label)
+
     draw_grid(root)
 
     # button generation
