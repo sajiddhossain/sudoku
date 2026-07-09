@@ -46,6 +46,12 @@ def button_generate_clicked():
     update_ui(new_grid)
 
 def resolve_button_clicked():
+    count = sum(1 for r in range(9) for c in range(9) if data_grid[r][c] != 0)
+
+    if count < 17:
+        show_error_message("Insert at least 17 numbers to resolve a valid puzzle.")
+        return
+
     if not is_grid_valid(data_grid):
         show_error_message("Grid contains conflicts.")
         return
