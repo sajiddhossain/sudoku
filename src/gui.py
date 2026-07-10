@@ -42,11 +42,14 @@ def create_empty_grid():
 def show_error_message(message):
     messagebox.showerror("Error", message)
 
-def button_generate_clicked():
+def button_generate_clicked(difficulty="medium"):
     global start_time, timer_running
+    levels = {"easy": 25, "medium": 40, "hard": 55}
+    count = levels.get(difficulty, 40)
+    timer_label.config(text="Generating...")
     new_grid = create_empty_grid()
     generate_complete_grid(new_grid)
-    remove_cells(new_grid, 40) # remove 40 cells for the puzzle
+    remove_cells(new_grid, count) # dynamic number for the puzzle
     start_time = time.time()
     timer_running = True
     update_timer(timer_label)

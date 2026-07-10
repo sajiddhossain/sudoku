@@ -30,6 +30,16 @@ def main():
     btn_note = create_note_button(root)
     btn_note.grid(row=5, column=0, columnspan=8, pady=10)
 
+    # button leveling system
+    btn_easy = tk.Button(root, text="Easy", command=lambda: button_generate_clicked("easy"))
+    btn_easy.grid(row=4, column=0)
+
+    btn_med = tk.Button(root, text="Medium", command=lambda: button_generate_clicked("medium"))
+    btn_med.grid(row=4, column=1)
+
+    btn_hard = tk.Button(root, text="Hard", command=lambda:button_generate_clicked("hard"))
+    btn_hard.grid(row=4, column=2)
+
     root.mainloop()
 
 if __name__ == "__main__":
