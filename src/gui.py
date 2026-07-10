@@ -4,6 +4,7 @@ from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 import time
+from src.persistence import get_best_time, save_best_time
 
 # gui.py
 
@@ -177,9 +178,18 @@ def check_victory():
     if all(all(row) for row in data_grid) and is_grid_valid(data_grid):
         global timer_running
         timer_running = False
-        messagebox.showinfo("Congratulations!", "Sudoku completed correctly!")
 
-def check_victory():
+        elapsed_seconds = int(time.time() - start_time)
+
+        best = get_best_time()
+
+        if elapsed_seconds < best:
+            save_best_time(elapsed_seconds)
+            messagebox.showinfo("Victory!", f"New record: {elapsed_seconds} seconds!")
+        else:
+            messagebox.showinfo("Victory!", f"Completed in {elapsed_seconds} seconds")
+
+
     for row in data_grid:
         for value in row:
             if value == 0:
