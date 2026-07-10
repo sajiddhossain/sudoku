@@ -122,6 +122,10 @@ def validate_cell(event, r, c):
     if not is_valid(data_grid, r, c, value):
         cells[r][c].config(bg="red", fg="white")
 
+    if check_victory() == True:
+        timer_running = False
+        messagebox.showinfo("Congratulations! You won")
+
 def clear_grid():
     for r in range(9):
         for c in range(9):
@@ -174,3 +178,14 @@ def check_victory():
         global timer_running
         timer_running = False
         messagebox.showinfo("Congratulations!", "Sudoku completed correctly!")
+
+def check_victory():
+    for row in data_grid:
+        for value in row:
+            if value == 0:
+                return False
+            
+    if is_grid_valid(data_grid) == True:
+        return True
+    
+    return False
