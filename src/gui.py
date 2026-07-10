@@ -5,12 +5,12 @@ from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 import time
 from src.persistence import get_best_time, save_best_time
+from src.config import COLOR_BG, COLOR_FG, COLOR_INVALID, COLOR_HIGHLIGHT, FONT_MAIN
+
 
 # gui.py
 
 cells = [[None for _ in range(9)] for _ in range(9)]
-DEFAULT_BG = "black"
-DEFAULT_FG = "white"
 data_grid = [[0 for _ in range(9)] for _ in range(9)]
 notes_grid = [[set() for _ in range(9)] for _ in range(9)]
 is_note_mode = False
@@ -22,7 +22,7 @@ timer_label = None
 def draw_grid(window):
     for block_r in range(3):
         for block_c in range(3):
-            frame = tkinter.Frame(window, highlightbackground="black", highlightthickness=2)
+            frame = tkinter.Frame(window, highlightbackground=COLOR_BG, highlightthickness=2)
             frame.grid(row=block_r, column=block_c, padx=1, pady=1)
 
             for i in range(3):
@@ -31,7 +31,7 @@ def draw_grid(window):
                     c = block_c * 3 + j
 
                     # entry widget for each cell
-                    entry = tkinter.Entry(frame, width=3, justify="center", bg=DEFAULT_BG, fg=DEFAULT_FG, insertbackground=DEFAULT_FG)
+                    entry = tkinter.Entry(frame, width=3, justify="center", bg=COLOR_BG, fg=COLOR_FG, insertbackground=COLOR_FG)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
                     entry.bind("<Button-1>", lambda event, r=r, c=c: highlight_cells(r, c))
@@ -119,13 +119,13 @@ def validate_cell(event, r, c):
     value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
     notes_grid[r][c].clear()
     data_grid[r][c] = value
-    cells[r][c].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
+    cells[r][c].config(bg=COLOR_BG, fg=COLOR_FG)
 
     if value == 0:
         return
 
     if not is_valid(data_grid, r, c, value):
-        cells[r][c].config(bg="red", fg="white")
+        cells[r][c].config(bg=COLOR_INVALID, fg=COLOR_FG)
 
     if check_victory() == True:
         timer_running = False
@@ -135,7 +135,7 @@ def clear_grid():
     for r in range(9):
         for c in range(9):
             data_grid[r][c] = 0
-            cells[r][c].config(state="normal", bg=DEFAULT_BG, fg=DEFAULT_FG)
+            cells[r][c].config(state="normal", bg=COLOR_BG, fg=COLOR_FG)
             cells[r][c].delete(0, tkinter.END)
     if timer_label:
         timer_label.config(text="00:00")
@@ -146,7 +146,7 @@ def button_hint_clicked():
         data_grid[r][c] = value
         cells[r][c].delete(0, tkinter.END)
         cells[r][c].insert(0, str(value))
-        cells[r][c].config(fg="blue", bg=DEFAULT_BG)
+        cells[r][c].config(fg="blue", bg=COLOR_BG)
     else:
         show_error_message("No hints available or puzzle is already solved.")
 
@@ -210,9 +210,9 @@ def highlight_cells(r, c):
     for r_i in range(9):
         for c_i in range(9):
             if not is_valid(data_grid, r_i, c_i, data_grid[r_i][c_i]) and data_grid[r_i][c_i] != 0:
-                cells[r_i][c_i].config(bg="red", fg="white")
+                cells[r_i][c_i].config(bg=COLOR_INVALID, fg=COLOR_FG)
             else:
-                cells[r_i][c_i].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
+                cells[r_i][c_i].config(bg=COLOR_BG, fg=COLOR_FG)
     
     if clicked_value != 0:
         for r_i in range(9):
@@ -234,14 +234,14 @@ def reset_game():
     for r in range(9):
         for c in range(9):
             cells[r][c].delete(0, "end")
-            cells[r][c].config(state="normal", bg=DEFAULT_BG, fg=DEFAULT_FG)
+            cells[r][c].config(state="normal", bg=COLOR_BG, fg=COLOR_FG)
 
 def refresh_grid_colors():
     for r in range(9):
         for c in range(9):
             val = data_grid[r][c]
-            bg_color = DEFAULT_BG
+            bg_color = COLOR_BG
             if val != 0 and not is_valid(data_grid, r, c, val):
-                bg_color = "red"
+                bg_color = COLOR_INVALID
 
             cells[r][c].config(bg=bg_color)
