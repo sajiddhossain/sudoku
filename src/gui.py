@@ -44,6 +44,7 @@ def show_error_message(message):
     messagebox.showerror("Error", message)
 
 def button_generate_clicked(difficulty="medium"):
+    reset_game()
     global start_time, timer_running
     levels = {"easy": 25, "medium": 40, "hard": 55}
     count = levels.get(difficulty, 40)
@@ -218,7 +219,7 @@ def highlight_cells(r, c):
         for r_i in range(9):
             for c_i in range(9):
                 if data_grid[r_i][c_i] == clicked_value:
-                    cells[r_i][c_i].config("blue")
+                    cells[r_i][c_i].config(bg=COLOR_HIGHLIGHT)
 
 def reset_game():
     global data_grid, notes_grid, timer_running, start_time
@@ -245,3 +246,8 @@ def refresh_grid_colors():
                 bg_color = COLOR_INVALID
 
             cells[r][c].config(bg=bg_color)
+
+def handle_cell_input(event, r, c):
+    global is_note_mode
+    val = cells[r][c].get()
+    refresh_grid_colors()

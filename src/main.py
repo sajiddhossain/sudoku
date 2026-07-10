@@ -1,44 +1,40 @@
 import tkinter as tk
 from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, toggle_note_mode, create_note_button, set_timer_label
+from src.config import FONT_MAIN
 
 # main.py
 
 def main():
     root = tk.Tk()
     root.title("Sudoku Forge")
-    root.geometry("400x500")
+    root.geometry("500x600")
 
-    timer_label = tk.Label(root, text="00:00", font=("Arial", 16))
-    timer_label.grid(row=6, column=0, columnspan=9, pady=5)
+    top_frame = tk.Frame(root)
+    top_frame.pack(pady=10)
+    timer_label = tk.Label(top_frame, text="00:00", font=FONT_MAIN)
+    timer_label.pack()
     set_timer_label(timer_label)
 
-    draw_grid(root)
+    grid_frame = tk.Frame(root)
+    grid_frame.pack(pady=10)
+    draw_grid(grid_frame)
 
-    # button generation
-    btn_gen = tk.Button(root, text="Generate Puzzle", command=button_generate_clicked)
-    btn_gen.grid(row=4, column=0, columnspan=4)
+    ctrl_frame = tk.Frame(root)
+    ctrl_frame.pack(pady=10)
 
-    btn_solve = tk.Button(root, text="Solve Puzzle", command=resolve_button_clicked)
-    btn_solve.grid(row=4, column=2, columnspan=4)
+    diff_frame = tk.Frame(ctrl_frame)
+    diff_frame.pack()
+    tk.Button(diff_frame, text="Easy", command=lambda: button_generate_clicked("easy")).pack(side=tk.LEFT)
+    tk.Button(diff_frame, text="Medium", command=lambda: button_generate_clicked("medium")).pack(side=tk.LEFT)
+    tk.Button(diff_frame, text="Hard", command=lambda: button_generate_clicked("hard")).pack(side=tk.LEFT)
 
-    btn_clear = tk.Button(root, text="Clear Grid", command=clear_grid)
-    btn_clear.grid(row=4, column=4, pady=10)
-
-    btn_hint = tk.Button(root, text="Get Hint", command=button_hint_clicked)
-    btn_hint.grid(row=4, column=6, pady=10)
-
-    btn_note = create_note_button(root)
-    btn_note.grid(row=5, column=0, columnspan=8, pady=10)
-
-    # button leveling system
-    btn_easy = tk.Button(root, text="Easy", command=lambda: button_generate_clicked("easy"))
-    btn_easy.grid(row=4, column=0)
-
-    btn_med = tk.Button(root, text="Medium", command=lambda: button_generate_clicked("medium"))
-    btn_med.grid(row=4, column=1)
-
-    btn_hard = tk.Button(root, text="Hard", command=lambda:button_generate_clicked("hard"))
-    btn_hard.grid(row=4, column=2)
+    action_frame = tk.Frame(ctrl_frame)
+    action_frame.pack(pady=10)
+    tk.Button(action_frame, text="Solve", command=resolve_button_clicked).pack(side=tk.LEFT)
+    tk.Button(action_frame, text="Clear", command=clear_grid).pack(side=tk.LEFT)
+    tk.Button(action_frame, text="Hint", command=button_hint_clicked).pack(side=tk.LEFT)
+    btn_note = create_note_button(action_frame)
+    btn_note.pack(side=tk.LEFT, padx=5)
 
     root.mainloop()
 
