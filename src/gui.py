@@ -34,6 +34,7 @@ def draw_grid(window):
                     entry = tkinter.Entry(frame, width=3, justify="center", bg=DEFAULT_BG, fg=DEFAULT_FG, insertbackground=DEFAULT_FG)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
+                    entry.bind("<Button-1>", lambda event, r=r, c=c: highlight_cells(r, c))
                     cells[r][c] = entry
 
 def create_empty_grid():
@@ -202,3 +203,19 @@ def check_victory():
         return True
     
     return False
+
+def highlight_cells(r, c):
+    clicked_value = data_grid[r][c]
+
+    for r_i in range(9):
+        for c_i in range(9):
+            if not is_valid(data_grid, r_i, c_i, data_grid[r_i][c_i]) and data_grid[r_i][c_i] != 0:
+                cells[r_i][c_i].config(bg="red", fg="white")
+            else:
+                cells[r_i][c_i].config(bg=DEFAULT_BG, fg=DEFAULT_FG)
+    
+    if clicked_value != 0:
+        for r_i in range(9):
+            for c_i in range(9):
+                if data_grid[r_i][c_i] == clicked_value:
+                    cells[r_i][c_i].config("blue")
