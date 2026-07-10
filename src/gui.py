@@ -119,10 +119,7 @@ def validate_cell(event, r, c):
     if value == 0:
         return
 
-    temp_grid = [row[:] for row in data_grid]
-    temp_grid[r][c] = 0
-
-    if not is_valid(temp_grid, r, c, value):
+    if not is_valid(data_grid, r, c, value):
         cells[r][c].config(bg="red", fg="white")
 
 def clear_grid():

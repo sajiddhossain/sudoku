@@ -33,12 +33,8 @@ def is_valid(grid, r, c, number):
         return False
     if not (1 <= number <= 9):
         return False
-    if grid[r][c] != 0:
-        return False
-    # checking if all the conditions are satisfied
-    if line_check(grid, r, c, number) and column_check(grid, r, c, number) and box_check(grid, r, c, number):
-        return True
-    return False # even if one of the conditions is not satisfied, it returns False
+    
+    return is_safe(grid, r, c, number)
 
 def exists_in_row(grid, r, c, number):
     for current_column in range(9):
@@ -56,4 +52,26 @@ def is_grid_valid(grid):
                 if not line_check(grid, r, c, value): return False
                 if not column_check(grid, r, c, value): return False
                 if not box_check(grid, r, c, value): return False
+    return True
+
+def is_safe(grid, r, c, number):
+    for c_i in range(9):
+        if (c_i != c) and (grid[r][c_i] == number):
+            return False
+    
+    for r_i in range(9):
+        if (r_i != r) and (grid[r_i][c] == number):
+            return False
+    
+    box_r_start = (r // 3) * 3
+    box_c_start = (c // 3) * 3
+
+    for i in range(3):
+        for j in range(3):
+            current_row = box_r_start + i
+            current_col = box_c_start + j
+
+            if (current_row != r or current_col != c) and (grid[current_row][current_col] == number):
+                return False
+            
     return True
