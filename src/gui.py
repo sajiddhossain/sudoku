@@ -219,3 +219,29 @@ def highlight_cells(r, c):
             for c_i in range(9):
                 if data_grid[r_i][c_i] == clicked_value:
                     cells[r_i][c_i].config("blue")
+
+def reset_game():
+    global data_grid, notes_grid, timer_running, start_time
+
+    data_grid = [[0 for _ in range(9)] for _ in range(9)]
+    notes_grid = [[set() for _ in range(9)] for _ in range(9)]
+
+    timer_running = False
+    start_time = None
+    if timer_label:
+        timer_label.config(text="00:00")
+    
+    for r in range(9):
+        for c in range(9):
+            cells[r][c].delete(0, "end")
+            cells[r][c].config(state="normal", bg=DEFAULT_BG, fg=DEFAULT_FG)
+
+def refresh_grid_colors():
+    for r in range(9):
+        for c in range(9):
+            val = data_grid[r][c]
+            bg_color = DEFAULT_BG
+            if val != 0 and not is_valid(data_grid, r, c, val):
+                bg_color = "red"
+
+            cells[r][c].config(bg=bg_color)
