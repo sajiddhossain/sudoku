@@ -18,6 +18,7 @@ btn_note = None
 start_time = None
 timer_running = False
 timer_label = None
+timer_job = None
 
 def draw_grid(window):
     for block_r in range(3):
@@ -32,6 +33,8 @@ def draw_grid(window):
 
                     # entry widget for each cell
                     entry = tkinter.Entry(frame, width=3, justify="center", bg=COLOR_BG, fg=COLOR_FG, insertbackground=COLOR_FG)
+                    vcmd = (window.register(lambda P: P == "" or (P.isdigit() and len(P) == 1)), "%P")
+                    entry.config(validate="key", validatecommand=vcmd)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
                     entry.bind("<Button-1>", lambda event, r=r, c=c: highlight_cells(r, c))
@@ -169,11 +172,15 @@ def create_note_button(window):
     return btn_note
 
 def update_timer(label):
+    global timer_job
     if timer_running:
         elapsed = int(time.time() - start_time)
         minutes, seconds = divmod(elapsed, 60)
         label.config(text=f"{minutes:02d}:{seconds:02d}")
         label.after(1000, lambda: update_timer(label))
+    else:
+        if timer_job:
+            label.after_cancel(timer_job)
 
 def set_timer_label(label):
     global timer_label

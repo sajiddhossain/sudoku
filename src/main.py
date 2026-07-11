@@ -36,6 +36,9 @@ def main():
     btn_note = create_note_button(action_frame)
     btn_note.pack(side=tk.LEFT, padx=5)
 
+    status_label = tk.Label(root, text="Ready", font=("Arial", 10), fg="gray")
+    status_label.pack(side=tk.BOTTOM, pady=5)
+
     root.mainloop()
 
 if __name__ == "__main__":
