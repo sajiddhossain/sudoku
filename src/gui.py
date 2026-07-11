@@ -5,7 +5,7 @@ from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 import time
 from src.persistence import get_best_time, save_best_time
-from src.config import COLOR_BG, COLOR_FG, COLOR_INVALID, COLOR_HIGHLIGHT, FONT_MAIN
+from src.config import COLOR_BG, COLOR_FG, COLOR_INVALID, COLOR_HIGHLIGHT, FONT_MAIN, COLOR_CROSS
 
 
 # gui.py
@@ -68,6 +68,8 @@ def button_generate_clicked(difficulty="medium"):
     update_ui(new_grid)
 
 def resolve_button_clicked():
+    global timer_running
+    timer_running = False
     count = sum(1 for r in range(9) for c in range(9) if data_grid[r][c] != 0)
 
     if count < 17:
@@ -219,6 +221,9 @@ def check_victory():
                 return False
             
     if is_grid_valid(data_grid) == True:
+        for r in range(9):
+            for c in range(9):
+                cells[r][c].config(state="disabled")
         return True
     
     return False
@@ -226,18 +231,24 @@ def check_victory():
 def highlight_cells(r, c):
     clicked_value = data_grid[r][c]
 
+    box_start_r, box_start_c = (r // 3) * 3, (c // 3) * 3
+
     for r_i in range(9):
         for c_i in range(9):
-            if not is_valid(data_grid, r_i, c_i, data_grid[r_i][c_i]) and data_grid[r_i][c_i] != 0:
-                cells[r_i][c_i].config(bg=COLOR_INVALID, fg=COLOR_FG)
-            else:
-                cells[r_i][c_i].config(bg=COLOR_BG, fg=COLOR_FG)
-    
-    if clicked_value != 0:
-        for r_i in range(9):
-            for c_i in range(9):
-                if data_grid[r_i][c_i] == clicked_value:
-                    cells[r_i][c_i].config(bg=COLOR_HIGHLIGHT)
+            val = data_grid[r_i][c_i]
+
+            bg_color = COLOR_BG
+
+            if val != 0 and not is_valid(data_grid, r_i, c_i, val):
+                bg_color = COLOR_INVALID
+            
+            elif clicked_value != 0 and val == clicked_value:
+                bg_color = COLOR_HIGHLIGHT
+
+            elif (r_i == r or c_i == c or (box_start_r <= r_i < box_start_r + 3 and box_start_c <= c_i < box_start_c + 3)):
+                bg_color = COLOR_CROSS
+                
+            cells[r_i][c_i].config(bg=bg_color)
 
 def reset_game():
     global data_grid, notes_grid, timer_running, start_time

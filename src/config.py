@@ -6,6 +6,7 @@ COLOR_INVALID = "red"
 COLOR_HIGHLIGHT = "blue"
 COLOR_NOTE = "gray"
 COLOR_SELECTED = "orange"
+COLOR_CROSS = "#2F2C2C"
 
 # fonts
 FONT_MAIN = ("Arial", 16)
