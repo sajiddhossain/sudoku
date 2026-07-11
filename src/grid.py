@@ -1,5 +1,3 @@
-from src.utils import is_valid
-
 # grid.py
 
 def find_empty_cell(grid):
@@ -18,7 +16,7 @@ def resolve(grid):
     r, c = cell # otherwise find the row and column
 
     for number in range(1, 10):
-        if is_valid(grid, r, c, number):
+        if is_safe(grid, r, c, number):
             grid[r][c] = number
 
             if resolve(grid):
@@ -37,15 +35,17 @@ def is_safe(grid, r, c, number):
         if (r_i != r) and (grid[r_i][c] == number):
             return False
     
-    box_r_start = (r // 3) * 3
-    box_c_start = (c // 3) * 3
+    start_r, start_c = (r // 3) * 3, (c // 3) * 3
 
     for i in range(3):
         for j in range(3):
-            current_row = box_r_start + i
-            current_col = box_c_start + j
 
-            if (current_row != r or current_col != c) and (grid[current_row][current_col] == number):
+            if (start_r + i != r or start_c + j != c) and (grid[start_r + i][start_c + j] == number):
                 return False
             
     return True
+
+def is_valid(grid, r, c, number):
+    if not (0 <= r < 9 and 0 <= c < 9): return False
+    if not (1 <= number <= 9): return False
+    return is_safe(grid, r, c, number)

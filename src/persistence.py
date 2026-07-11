@@ -6,9 +6,15 @@ FILE_PATH = "data/scores.json"
 def get_best_time():
     if not os.path.exists(FILE_PATH):
         return 9999
-    with open(FILE_PATH, "r") as f:
-        data = json.load(f)
-        return data.get("best_time", 9999)
+    try:
+        with open(FILE_PATH, "r") as f:
+            content = f.read().strip()
+            if not content:
+                return 9999
+            data = json.loads(content)
+            return data.get("best_time", 9999)
+    except (json.JSONDecodeError, ValueError):
+        return 9999
     
 def save_best_time(seconds):
     data = {"best_time": seconds}

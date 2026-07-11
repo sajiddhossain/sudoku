@@ -25,7 +25,11 @@ def generate_complete_grid(grid):
 
 def remove_cells(grid, count):
     removed = 0
+    attempts = 0
+    max_attempts = 400
+
     while removed < count:
+        attempts += 1
         r = random.randint(0, 8)
         c = random.randint(0, 8)
 
