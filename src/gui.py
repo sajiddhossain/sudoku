@@ -20,12 +20,15 @@ timer_running = False
 timer_label = None
 timer_job = None
 status_label_ref = None
+immutable_grid = [[False for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
     for block_r in range(3):
         for block_c in range(3):
             frame = tkinter.Frame(window, highlightbackground=COLOR_BG, highlightthickness=2)
             frame.grid(row=block_r, column=block_c, padx=1, pady=1)
+
+            frame.bind("<Button-1>", lambda event, r=block_r*3, c=block_c*3: highlight_cells(r, c))
 
             for i in range(3):
                 for j in range(3):
@@ -53,6 +56,7 @@ def button_generate_clicked(difficulty="medium"):
     levels = {"easy": 25, "medium": 40, "hard": 55}
     count = levels.get(difficulty, 40)
     timer_label.config(text="Generating...")
+    timer_label.update()
     new_grid = create_empty_grid()
     generate_complete_grid(new_grid)
     remove_cells(new_grid, count) # dynamic number for the puzzle
@@ -62,7 +66,15 @@ def button_generate_clicked(difficulty="medium"):
     
     for r in range(9):
         for c in range(9):
-            data_grid[r][c] = new_grid[r][c]
+            val = new_grid[r][c]
+            data_grid[r][c] = val
+
+            if val != 0:
+                cells[r][c].insert(0, str(val))
+                cells[r][c].config(state="disabled")
+                immutable_grid[r][c] = True
+            else:
+                immutable_grid[r][c] = False
 
     update_status(f"Game generated: {difficulty}")
     update_ui(new_grid)
@@ -229,6 +241,12 @@ def check_victory():
     return False
 
 def highlight_cells(r, c):
+    for r_i in range(9):
+        for c_i in range(9):
+            cells[r_i][c_i].config(state="normal", bg=COLOR_BG)
+            if immutable_grid[r_i][c_i]:
+                cells[r_i][c_i].config(state="disabled")
+
     clicked_value = data_grid[r][c]
 
     box_start_r, box_start_c = (r // 3) * 3, (c // 3) * 3
@@ -247,14 +265,21 @@ def highlight_cells(r, c):
 
             elif (r_i == r or c_i == c or (box_start_r <= r_i < box_start_r + 3 and box_start_c <= c_i < box_start_c + 3)):
                 bg_color = COLOR_CROSS
-                
+
+            cells[r_i][c_i].config(state="normal")    
             cells[r_i][c_i].config(bg=bg_color)
+            if immutable_grid[r_i][c_i]:
+                cells[r_i][c_i].config(state="disabled")
 
 def reset_game():
-    global data_grid, notes_grid, timer_running, start_time
+    global data_grid, notes_grid, timer_running, start_time, immutable_grid
 
     data_grid = [[0 for _ in range(9)] for _ in range(9)]
     notes_grid = [[set() for _ in range(9)] for _ in range(9)]
+
+    for r in range(9):
+        for c in range(9):
+            immutable_grid[r][c] = False
 
     timer_running = False
     start_time = None
