@@ -1,6 +1,6 @@
 import random
 from src.utils import is_valid
-from src.grid import find_empty_cell, resolve
+from src.grid import find_empty_cell, is_safe, resolve
 
 # solver.py
 
@@ -13,10 +13,12 @@ def generate_complete_grid(grid):
     random.shuffle(numbers) # shuffle the numbers to ensure randomness
 
     for number in numbers:
-        if is_valid(grid, r, c, number):
-            grid[r][c] = number
+        if is_safe(grid, r, c, number):
+            grid[r][c] = number 
+
             if generate_complete_grid(grid):
                 return True
+            
             grid[r][c] = 0
 
     return False
@@ -64,3 +66,10 @@ def get_hint(grid):
                     suggested_value = copy_grid[r][c]
                     return (r, c, suggested_value)
     return None, None, None
+
+def is_grid_empty(grid):
+    for r in range(9):
+        for c in range(9):
+            if grid[r][c] != 0:
+                return False
+    return True
