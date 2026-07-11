@@ -1,3 +1,4 @@
+# config.py
 # colors
 COLOR_BG = "black"
 COLOR_FG = "white"

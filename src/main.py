@@ -7,7 +7,7 @@ from src.config import FONT_MAIN
 def main():
     root = tk.Tk()
     root.title("Sudoku Forge")
-    root.geometry("500x600")
+    root.geometry("500x500")
 
     top_frame = tk.Frame(root)
     top_frame.pack(pady=10)
