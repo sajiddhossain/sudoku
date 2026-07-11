@@ -19,6 +19,7 @@ start_time = None
 timer_running = False
 timer_label = None
 timer_job = None
+status_label_ref = None
 
 def draw_grid(window):
     for block_r in range(3):
@@ -33,7 +34,7 @@ def draw_grid(window):
 
                     # entry widget for each cell
                     entry = tkinter.Entry(frame, width=3, justify="center", bg=COLOR_BG, fg=COLOR_FG, insertbackground=COLOR_FG)
-                    vcmd = (window.register(lambda P: P == "" or (P.isdigit() and len(P) == 1)), "%P")
+                    vcmd = (window.register(lambda P: P == "" or (P.isdigit() and len(P) == 1 and int(P) > 0)), "%P")
                     entry.config(validate="key", validatecommand=vcmd)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
@@ -63,6 +64,7 @@ def button_generate_clicked(difficulty="medium"):
         for c in range(9):
             data_grid[r][c] = new_grid[r][c]
 
+    update_status(f"Game generated: {difficulty}")
     update_ui(new_grid)
 
 def resolve_button_clicked():
@@ -79,6 +81,7 @@ def resolve_button_clicked():
     timer_running = False
     
     if resolve(data_grid):
+        update_status("Puzzle solved by the system!")
         update_ui(data_grid)
     else:
         show_error_message("No solution found.")
@@ -143,6 +146,8 @@ def clear_grid():
             cells[r][c].delete(0, tkinter.END)
     if timer_label:
         timer_label.config(text="00:00")
+    
+    update_status("Grid Cleared.")
 
 def button_hint_clicked():
     r, c, value = get_hint(data_grid)
@@ -151,7 +156,9 @@ def button_hint_clicked():
         cells[r][c].delete(0, tkinter.END)
         cells[r][c].insert(0, str(value))
         cells[r][c].config(fg="blue", bg=COLOR_BG)
+        update_status("Hint gived")
     else:
+        update_status("No hints available")
         show_error_message("No hints available or puzzle is already solved.")
 
 def toggle_note(r, c, number):
@@ -165,6 +172,8 @@ def toggle_note_mode():
     is_note_mode = not is_note_mode
     if btn_note:
         btn_note.config(bg="orange" if is_note_mode else "SystemButtonFace")
+        status = "Note Mode Activated" if is_note_mode else "Note Mode Disactivated"
+        update_status(status)
 
 def create_note_button(window):
     global btn_note
@@ -198,8 +207,10 @@ def check_victory():
         if elapsed_seconds < best:
             save_best_time(elapsed_seconds)
             messagebox.showinfo("Victory!", f"New record: {elapsed_seconds} seconds!")
+            update_status("Congratulations! New Record!")
         else:
             messagebox.showinfo("Victory!", f"Completed in {elapsed_seconds} seconds")
+            update_status("Victory! Game completed")
 
 
     for row in data_grid:
@@ -258,3 +269,11 @@ def handle_cell_input(event, r, c):
     global is_note_mode
     val = cells[r][c].get()
     refresh_grid_colors()
+
+def set_status_label(label):
+    global status_label_ref
+    status_label_ref = label
+
+def update_status(msg):
+    if status_label_ref:
+        status_label_ref.config(text=msg)
