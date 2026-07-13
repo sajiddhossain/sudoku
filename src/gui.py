@@ -1,6 +1,6 @@
 import tkinter
 from tkinter import messagebox
-from src.grid import resolve
+from src.grid import resolve, on_window_click
 from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 import time
@@ -23,6 +23,8 @@ status_label_ref = None
 immutable_grid = [[False for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
+    window.bind("<Button-1>", on_window_click)
+
     for block_r in range(3):
         for block_c in range(3):
             frame = tkinter.Frame(window, highlightbackground=COLOR_BG, highlightthickness=2)
@@ -41,7 +43,6 @@ def draw_grid(window):
                     entry.config(validate="key", validatecommand=vcmd)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
-                    entry.bind("<Button-1>", lambda event, r=r, c=c: highlight_cells(r, c))
                     cells[r][c] = entry
 
 def create_empty_grid():
@@ -241,20 +242,12 @@ def check_victory():
     return False
 
 def highlight_cells(r, c):
-    for r_i in range(9):
-        for c_i in range(9):
-            cells[r_i][c_i].config(state="normal", bg=COLOR_BG)
-            if immutable_grid[r_i][c_i]:
-                cells[r_i][c_i].config(state="disabled")
-
     clicked_value = data_grid[r][c]
-
     box_start_r, box_start_c = (r // 3) * 3, (c // 3) * 3
 
     for r_i in range(9):
         for c_i in range(9):
             val = data_grid[r_i][c_i]
-
             bg_color = COLOR_BG
 
             if val != 0 and not is_valid(data_grid, r_i, c_i, val):

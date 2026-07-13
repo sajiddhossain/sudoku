@@ -1,4 +1,5 @@
 # grid.py
+from src.gui import highlight_cells
 
 def find_empty_cell(grid):
     for r in range(9):
@@ -49,3 +50,13 @@ def is_valid(grid, r, c, number):
     if not (0 <= r < 9 and 0 <= c < 9): return False
     if not (1 <= number <= 9): return False
     return is_safe(grid, r, c, number)
+
+def on_window_click(event):
+    global cells
+    widget = event.widget
+
+    for r in range(9):
+        for c in range(9):
+            if cells[r][c] == widget:
+                highlight_cells(r, c)
+                return
