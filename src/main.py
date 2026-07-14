@@ -5,18 +5,18 @@ from src.menu import create_start_menu
 
 # main.py
 
-def setup_game_ui(root, container):
-    top_frame = tk.Frame(root)
+def setup_game_ui(parent_container):
+    top_frame = tk.Frame(parent_container)
     top_frame.pack(pady=10)
     timer_label = tk.Label(top_frame, text="00:00", font=FONT_MAIN)
     timer_label.pack()
     set_timer_label(timer_label)
 
-    grid_frame = tk.Frame(root)
+    grid_frame = tk.Frame(parent_container)
     grid_frame.pack(pady=10)
     draw_grid(grid_frame)
 
-    ctrl_frame = tk.Frame(root)
+    ctrl_frame = tk.Frame(parent_container)
     ctrl_frame.pack(pady=10)
 
     diff_frame = tk.Frame(ctrl_frame)
@@ -33,7 +33,7 @@ def setup_game_ui(root, container):
     btn_note = create_note_button(action_frame)
     btn_note.pack(side=tk.LEFT, padx=5)
 
-    status_label = tk.Label(root, text="Ready", font=("Arial", 10), fg="gray")
+    status_label = tk.Label(parent_container, text="Ready", font=("Arial", 10), fg="gray")
     status_label.pack(side=tk.BOTTOM, pady=5)
     set_status_label(status_label)
 
@@ -48,7 +48,7 @@ def main():
     def on_game_start(difficulty):
         for widget in container.winfo_children():
             widget.destroy()
-        setup_game_ui(root, container)
+        setup_game_ui(container)
         button_generate_clicked(difficulty)
 
     create_start_menu(container, on_game_start)
