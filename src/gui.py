@@ -21,9 +21,11 @@ timer_label = None
 timer_job = None
 status_label_ref = None
 immutable_grid = [[False for _ in range(9)] for _ in range(9)]
+undo_stack = []
 
 def draw_grid(window):
     window.bind_all("<Key>", global_key_handler)
+    window.bind_all("<Control-z>", lambda event: undo_last_move())
 
     window.focus_set()
 
@@ -117,6 +119,7 @@ def update_ui(grid_data):
                 cells[r][c].config(state="normal")
 
 def validate_cell(event, r, c):
+    old_value = data_grid[r][c]
     value_str = cells[r][c].get()
 
     if event and event.keysym == "BackSpace":
@@ -144,6 +147,8 @@ def validate_cell(event, r, c):
             cells[r][c].config(fg="gray")
         return
     value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
+    if value != old_value:
+        undo_stack.append({'r': r, 'c': c, 'val': old_value})
     notes_grid[r][c].clear()
     data_grid[r][c] = value
     cells[r][c].config(bg=get_color("bg"), fg=get_color("fg"))
@@ -342,3 +347,36 @@ def global_key_handler(event):
         elif key == "n": toggle_note_mode()
         elif key == "g": button_generate_clicked()
         return "break"
+
+def record_move(r, c, old_val):
+    undo_stack.append({"r": r, "c": c, "val": old_val})
+
+def undo_last_move(event=None):
+    if not undo_stack:
+        update_status("No moves to undo!")
+        return "break"
+    
+    move = undo_stack.pop()
+    r, c, val = move["r"], move["c"], move["val"]
+
+    data_grid[r][c] = val
+    cells[r][c].delete(0, "end")
+    if val != 0:
+        cells[r][c].insert(0, str(val))
+    update_status(f"Undo: restored cell ({r+1}, {c+1})")
+    return "break"
+
+def undo_last_move():
+    if not undo_stack:
+        update_status("No moves to undo!")
+        return
+    
+    move = undo_stack.pop()
+    r, c, old_val = move["r"], move["c"], move["val"]
+    data_grid[r][c] = old_val
+    cells[r][c].delete(0, "end")
+    if old_val != 0:
+        cells[r][c].insert(0, str(old_val))
+    cells[r][c].config(bg=get_color("bg"), fg=get_color("fg"))
+    refresh_grid_colors()
+    update_status(f"Undo: restored ({r+1}, {c+1})")
