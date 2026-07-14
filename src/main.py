@@ -1,5 +1,5 @@
 import tkinter as tk
-from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, toggle_note_mode, create_note_button, set_timer_label, set_status_label
+from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, create_note_button, set_timer_label, set_status_label
 from src.config import FONT_MAIN
 
 # main.py

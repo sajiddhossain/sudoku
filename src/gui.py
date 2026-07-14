@@ -1,11 +1,11 @@
 import tkinter
 from tkinter import messagebox
-from src.grid import resolve, on_window_click
+from src.grid import resolve
 from src.solver import generate_complete_grid, remove_cells, get_hint
 from src.utils import is_valid, is_grid_valid
 import time
 from src.persistence import get_best_time, save_best_time
-from src.config import COLOR_BG, COLOR_FG, COLOR_INVALID, COLOR_HIGHLIGHT, FONT_MAIN, COLOR_CROSS
+from src.config import get_color, FONT_MAIN
 
 
 # gui.py
@@ -23,11 +23,13 @@ status_label_ref = None
 immutable_grid = [[False for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
-    window.bind("<Button-1>", on_window_click)
+    window.bind("<Key>", global_key_handler)
+
+    window.focus_set()
 
     for block_r in range(3):
         for block_c in range(3):
-            frame = tkinter.Frame(window, highlightbackground=COLOR_BG, highlightthickness=2)
+            frame = tkinter.Frame(window, highlightbackground=get_color("bg"), highlightthickness=2)
             frame.grid(row=block_r, column=block_c, padx=1, pady=1)
 
             frame.bind("<Button-1>", lambda event, r=block_r*3, c=block_c*3: highlight_cells(r, c))
@@ -38,12 +40,14 @@ def draw_grid(window):
                     c = block_c * 3 + j
 
                     # entry widget for each cell
-                    entry = tkinter.Entry(frame, width=3, justify="center", bg=COLOR_BG, fg=COLOR_FG, insertbackground=COLOR_FG)
+                    entry = tkinter.Entry(frame, width=3, justify="center", bg=get_color("bg"), fg=get_color("fg"), insertbackground=get_color("fg"))
                     vcmd = (window.register(lambda P: P == "" or (P.isdigit() and len(P) == 1 and int(P) > 0)), "%P")
                     entry.config(validate="key", validatecommand=vcmd)
                     entry.grid(row=i, column=j)
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
                     cells[r][c] = entry
+    
+    update_status("Sudoku Ready - Press G to Start, T for Theme, N for Notes")
 
 def create_empty_grid():
     return [[0 for _ in range(9)] for _ in range(9)]
@@ -141,13 +145,13 @@ def validate_cell(event, r, c):
     value = int(value_str) if value_str.isdigit() and 1 <= int(value_str) <= 9 else 0
     notes_grid[r][c].clear()
     data_grid[r][c] = value
-    cells[r][c].config(bg=COLOR_BG, fg=COLOR_FG)
+    cells[r][c].config(bg=get_color("bg"), fg=get_color("fg"))
 
     if value == 0:
         return
 
     if not is_valid(data_grid, r, c, value):
-        cells[r][c].config(bg=COLOR_INVALID, fg=COLOR_FG)
+        cells[r][c].config(bg=get_color("invalid"), fg=get_color("fg"))
 
     if check_victory() == True:
         timer_running = False
@@ -157,7 +161,7 @@ def clear_grid():
     for r in range(9):
         for c in range(9):
             data_grid[r][c] = 0
-            cells[r][c].config(state="normal", bg=COLOR_BG, fg=COLOR_FG)
+            cells[r][c].config(state="normal", bg=get_color("bg"), fg=get_color("fg"))
             cells[r][c].delete(0, tkinter.END)
     if timer_label:
         timer_label.config(text="00:00")
@@ -170,7 +174,7 @@ def button_hint_clicked():
         data_grid[r][c] = value
         cells[r][c].delete(0, tkinter.END)
         cells[r][c].insert(0, str(value))
-        cells[r][c].config(fg="blue", bg=COLOR_BG)
+        cells[r][c].config(fg="blue", bg=get_color("bg"))
         update_status("Hint gived")
     else:
         update_status("No hints available")
@@ -248,16 +252,16 @@ def highlight_cells(r, c):
     for r_i in range(9):
         for c_i in range(9):
             val = data_grid[r_i][c_i]
-            bg_color = COLOR_BG
+            bg_color = get_color("bg")
 
             if val != 0 and not is_valid(data_grid, r_i, c_i, val):
-                bg_color = COLOR_INVALID
+                bg_color = get_color("invalid")
             
             elif clicked_value != 0 and val == clicked_value:
-                bg_color = COLOR_HIGHLIGHT
+                bg_color = get_color("highlight")
 
             elif (r_i == r or c_i == c or (box_start_r <= r_i < box_start_r + 3 and box_start_c <= c_i < box_start_c + 3)):
-                bg_color = COLOR_CROSS
+                bg_color = get_color("cross")
 
             cells[r_i][c_i].config(state="normal")    
             cells[r_i][c_i].config(bg=bg_color)
@@ -282,15 +286,15 @@ def reset_game():
     for r in range(9):
         for c in range(9):
             cells[r][c].delete(0, "end")
-            cells[r][c].config(state="normal", bg=COLOR_BG, fg=COLOR_FG)
+            cells[r][c].config(state="normal", bg=get_color("bg"), fg=get_color("fg"))
 
 def refresh_grid_colors():
     for r in range(9):
         for c in range(9):
             val = data_grid[r][c]
-            bg_color = COLOR_BG
+            bg_color = get_color("bg")
             if val != 0 and not is_valid(data_grid, r, c, val):
-                bg_color = COLOR_INVALID
+                bg_color = get_color("invalid")
 
             cells[r][c].config(bg=bg_color)
 
@@ -306,3 +310,31 @@ def set_status_label(label):
 def update_status(msg):
     if status_label_ref:
         status_label_ref.config(text=msg)
+
+def on_window_click(event):
+    global cells
+    widget = event.widget
+    
+    if isinstance(widget, tkinter.Frame):
+        return
+
+    for r in range(9):
+        for c in range(9):
+            if cells[r][c] == widget:
+                highlight_cells(r, c)
+                return
+            
+def toggle_theme():
+    import src.config as config
+    config.CURRENT_THEME = "light" if config.CURRENT_THEME == "dark" else "dark"
+
+    for r in range(9):
+        for c in range(9):
+            cells[r][c].config(bg=config.get_color("bg"), fg=config.get_color("fg"))
+            refresh_grid_colors()
+
+def global_key_handler(event):
+    key = event.keysym.lower()
+    if key == "t": toggle_theme()
+    elif key == "n": toggle_note_mode()
+    elif key == "g": button_generate_clicked()
