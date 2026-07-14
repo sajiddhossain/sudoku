@@ -23,7 +23,7 @@ status_label_ref = None
 immutable_grid = [[False for _ in range(9)] for _ in range(9)]
 
 def draw_grid(window):
-    window.bind("<Key>", global_key_handler)
+    window.bind_all("<Key>", global_key_handler)
 
     window.focus_set()
 
@@ -47,7 +47,8 @@ def draw_grid(window):
                     entry.bind("<KeyRelease>", lambda event, r=r, c=c: validate_cell(event, r, c))
                     cells[r][c] = entry
     
-    update_status("Sudoku Ready - Press G to Start, T for Theme, N for Notes")
+    instructions = tkinter.Label(window, text="G: Generate | T: Theme | N: Note Mode", font=("Arial", 10))
+    instructions.grid(row=4, column=0, columnspan=3, pady=5)
 
 def create_empty_grid():
     return [[0 for _ in range(9)] for _ in range(9)]
@@ -335,6 +336,9 @@ def toggle_theme():
 
 def global_key_handler(event):
     key = event.keysym.lower()
-    if key == "t": toggle_theme()
-    elif key == "n": toggle_note_mode()
-    elif key == "g": button_generate_clicked()
+
+    if key in ["t", "n", "g"]:
+        if key == "t": toggle_theme()
+        elif key == "n": toggle_note_mode()
+        elif key == "g": button_generate_clicked()
+        return "break"

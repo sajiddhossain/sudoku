@@ -1,14 +1,11 @@
 import tkinter as tk
 from src.gui import draw_grid, button_generate_clicked, resolve_button_clicked, clear_grid, button_hint_clicked, create_note_button, set_timer_label, set_status_label
 from src.config import FONT_MAIN
+from src.menu import create_start_menu
 
 # main.py
 
-def main():
-    root = tk.Tk()
-    root.title("Sudoku Forge")
-    root.geometry("500x500")
-
+def setup_game_ui(root, container):
     top_frame = tk.Frame(root)
     top_frame.pack(pady=10)
     timer_label = tk.Label(top_frame, text="00:00", font=FONT_MAIN)
@@ -39,6 +36,22 @@ def main():
     status_label = tk.Label(root, text="Ready", font=("Arial", 10), fg="gray")
     status_label.pack(side=tk.BOTTOM, pady=5)
     set_status_label(status_label)
+
+def main():
+    root = tk.Tk()
+    root.title("Sudoku Forge")
+    root.geometry("500x600")
+
+    container = tk.Frame(root)
+    container.pack(fill="both", expand=True)
+
+    def on_game_start(difficulty):
+        for widget in container.winfo_children():
+            widget.destroy()
+        setup_game_ui(root, container)
+        button_generate_clicked(difficulty)
+
+    create_start_menu(container, on_game_start)
 
     root.mainloop()
 
