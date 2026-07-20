@@ -435,13 +435,13 @@ def show_stats_window(parent_window):
             fg=get_color("fg"),
             anchor="e"
         )
-        lbl_diff.pack(side="right")
+        lbl_val.pack(side="right")
 
-        btn_close = tkinter.Button(
-            stats_win,
-            text="Close",
-            command=stats_win.destroy,
-            bg=get_color("selected"),
-            fg="black"
-        )
-        btn_close.pack(pady=15)
+    btn_close = tkinter.Button(
+        stats_win,
+        text="Close",
+        command=stats_win.destroy,
+        bg=get_color("selected"),
+        fg="black"
+    )
+    btn_close.pack(pady=15)
