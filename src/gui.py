@@ -371,3 +371,15 @@ def undo_last_move():
     refresh_grid_colors()
     update_status(f"Undo: restored ({r+1}, {c+1})")
     return "break"
+
+def show_stats_window(parent_window):
+    import json
+    import os
+
+    stats_file = "data/scores.json"
+
+    stats_win = tkinter.Toplevel(parent_window)
+    stats_win.title("Statistics & High scores")
+    stats_win.geometry("300x250")
+    stats_win.resizable(False, False)
+    stats_win.configure(bg=get_color("bg"))
