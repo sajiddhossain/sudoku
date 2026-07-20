@@ -347,10 +347,11 @@ def toggle_theme():
 def global_key_handler(event):
     key = event.keysym.lower()
 
-    if key in ["t", "n", "g"]:
+    if key in ["t", "n", "g", "s"]:
         if key == "t": toggle_theme()
         elif key == "n": toggle_note_mode()
         elif key == "g": button_generate_clicked()
+        elif key == "s": show_stats_window(event.widget.winfo_toplevel())
         return "break"
 
 def record_move(r, c, old_val):
@@ -383,3 +384,64 @@ def show_stats_window(parent_window):
     stats_win.geometry("300x250")
     stats_win.resizable(False, False)
     stats_win.configure(bg=get_color("bg"))
+
+    title_label = tkinter.Label(
+        stats_win,
+        text="Best times",
+        font=("Arial", 16, "bold"),
+        bg=get_color("bg"),
+        fg=get_color("fg")
+    )
+    title_label.pack(pady=10)
+
+    scores = {}
+    if os.path.exists(stats_file):
+        try:
+            with open(stats_file, "r") as f:
+                scores = json.load(f)
+        except Exception:
+            scores = {}
+    
+    difficulties = ["easy", "medium", "hard"]
+
+    frame = tkinter.Frame(stats_win, bg=get_color("bg"))
+    frame.pack(pady=10, fill="x", padx=20)
+
+    for diff in difficulties:
+        best_time = scores.get(diff, None)
+        if best_time is not None:
+            time_str = f"{best_time // 60:02d}:{best_time % 60:02d}"
+        else:
+            time_str = "--:--"
+        
+        row_frame = tkinter.Frame(frame, bg=get_color("bg"))
+        row_frame.pack(fill="x", pady=5)
+
+        lbl_diff = tkinter.Label(
+            row_frame,
+            text=f"{diff.capitalize()}:",
+            font=("Arial", 12, "bold"),
+            bg=get_color("bg"),
+            fg=get_color("fg"),
+            anchor="w"
+        )
+        lbl_diff.pack(side="left")
+
+        lbl_val = tkinter.Label(
+            row_frame,
+            text=time_str,
+            font=("Arial", 12),
+            bg=get_color("bg"),
+            fg=get_color("fg"),
+            anchor="e"
+        )
+        lbl_diff.pack(side="right")
+
+        btn_close = tkinter.Button(
+            stats_win,
+            text="Close",
+            command=stats_win.destroy,
+            bg=get_color("selected"),
+            fg="black"
+        )
+        btn_close.pack(pady=15)
