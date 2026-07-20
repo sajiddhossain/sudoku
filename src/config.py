@@ -31,3 +31,6 @@ FONT_MAIN = ("Arial", 16)
 FONT_NOTE = ("Arial", 8)
 FILES_SCORES = "data/scores.json"
 DEFAULT_DIFFICULTY = "medium"
+
+# variables
+current_diff = globals().get("game_difficulty", "medium")

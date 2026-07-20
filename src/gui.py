@@ -6,6 +6,7 @@ from src.utils import is_valid, is_grid_valid
 import time
 from src.persistence import get_best_time, save_best_time
 from src.config import get_color, FONT_MAIN
+from src.stats import save_stat, get_best_time
 
 
 # gui.py
@@ -22,6 +23,7 @@ timer_job = None
 status_label_ref = None
 immutable_grid = [[False for _ in range(9)] for _ in range(9)]
 undo_stack = []
+current_diff = "medium"
 
 def draw_grid(window):
     window.bind_all("<Key>", global_key_handler)
@@ -60,7 +62,8 @@ def show_error_message(message):
 
 def button_generate_clicked(difficulty="medium"):
     reset_game()
-    global start_time, timer_running
+    global start_time, timer_running, current_diff
+    current_diff = difficulty
     levels = {"easy": 25, "medium": 40, "hard": 55}
     count = levels.get(difficulty, 40)
     timer_label.config(text="Generating...")
@@ -227,27 +230,29 @@ def check_victory():
 
         elapsed_seconds = int(time.time() - start_time)
 
-        best = get_best_time()
+        current_difficulty = current_diff
 
-        if elapsed_seconds < best:
-            save_best_time(elapsed_seconds)
+        save_stat(current_difficulty, elapsed_seconds)
+
+        best = get_best_time(current_difficulty)
+
+        for r in range(9):
+            for c in range(9):
+                cells[r][c].config(state="disabled")
+
+        if best == elapsed_seconds or (best is None):
             messagebox.showinfo("Victory!", f"New record: {elapsed_seconds} seconds!")
             update_status("Congratulations! New Record!")
         else:
-            messagebox.showinfo("Victory!", f"Completed in {elapsed_seconds} seconds")
+            messagebox.showinfo("Victory!", f"Completed in {elapsed_seconds} seconds!\nBest time: {best} seconds")
             update_status("Victory! Game completed")
-
+        
+        return True
 
     for row in data_grid:
         for value in row:
             if value == 0:
                 return False
-            
-    if is_grid_valid(data_grid) == True:
-        for r in range(9):
-            for c in range(9):
-                cells[r][c].config(state="disabled")
-        return True
     
     return False
 
@@ -351,21 +356,6 @@ def global_key_handler(event):
 def record_move(r, c, old_val):
     undo_stack.append({"r": r, "c": c, "val": old_val})
 
-def undo_last_move(event=None):
-    if not undo_stack:
-        update_status("No moves to undo!")
-        return "break"
-    
-    move = undo_stack.pop()
-    r, c, val = move["r"], move["c"], move["val"]
-
-    data_grid[r][c] = val
-    cells[r][c].delete(0, "end")
-    if val != 0:
-        cells[r][c].insert(0, str(val))
-    update_status(f"Undo: restored cell ({r+1}, {c+1})")
-    return "break"
-
 def undo_last_move():
     if not undo_stack:
         update_status("No moves to undo!")
@@ -380,3 +370,4 @@ def undo_last_move():
     cells[r][c].config(bg=get_color("bg"), fg=get_color("fg"))
     refresh_grid_colors()
     update_status(f"Undo: restored ({r+1}, {c+1})")
+    return "break"
