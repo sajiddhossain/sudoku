@@ -16,3 +16,6 @@ Completed - Fully functional game featuring dynamic difficulty, note mode, histo
 1. Download the executable from the [GitHub Releases](https://github.com/sajiddhossain/sudoku/releases/tag/v1.0.0) page and extract it
 2. **First-run security note:** Because this app is unsigned, macOS might block it the first time. **Right-click (or Control-click)** on `SudokuForge.app`, select **Open**, and click **Open** again in the prompt
 3. Use `G` to generate a new game, `N` for notes, and `S` for high scores!
+
+## AI Disclosure
+AI tools were used during development as a coding collaborator for debugging and application packaging
