@@ -1,6 +1,8 @@
 import json
 import os
 
+BASE_DIR = os.path.join(os.path.expanduser("~"), ".sudokuforge")
+os.makedirs(BASE_DIR, exist_ok=True)
 FILE_PATH = "data/scores.json"
 
 def get_best_time():
@@ -18,6 +20,5 @@ def get_best_time():
     
 def save_best_time(seconds):
     data = {"best_time": seconds}
-    os.makedirs("data", exist_ok=True)
     with open(FILE_PATH, "w") as f:
         json.dump(data, f)
