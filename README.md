@@ -17,5 +17,11 @@ Completed - Fully functional game featuring dynamic difficulty, note mode, histo
 2. **First-run security note:** Because this app is unsigned, macOS might block it the first time. **Right-click (or Control-click)** on `SudokuForge.app`, select **Open**, and click **Open** again in the prompt
 3. Use `G` to generate a new game, `N` for notes, and `S` for high scores!
 
+### Troubleshooting macOS Security (Error: library load disallowed)
+If macOS blocks the app or gives a library load error, open your Terminal in the folder where you extracted the app and run this command to clear the quarantine flag:
+```
+xattr -cr SudokuForge
+```
+
 ## AI Disclosure
 AI tools were used during development as a coding collaborator for debugging and application packaging
