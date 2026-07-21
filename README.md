@@ -4,6 +4,11 @@ A custom Sudoku generator and solver built from scratch in Python and Tkinter.
 ## Status
 Completed - Fully functional game featuring dynamic difficulty, note mode, history undo, theme switching and persistent statistics
 
+## Compatibility & Architecture
+- **OS:** macOS
+- **Architecture:** Apple Silicon (M1/M2/M3/M4)
+- **Build Format:** Native Standalone Executable
+
 ## Features
 - Procedural Sudoku generation (Easy, Medium, Hard)
 - Recursive backtracking solver & hints
